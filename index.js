@@ -8,7 +8,13 @@ const ObjectID = require("mongodb").ObjectID;
 const port = process.env.PORT || 5000;
 
 app.use(cors());
-app.use(BodyParser.json());
+// app.use(BodyParser.json());
+app.use( BodyParser.json({limit: '50mb'}) );
+app.use(BodyParser.urlencoded({
+  limit: '50mb',
+  extended: true,
+  parameterLimit:50000
+}));
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.tpdhc.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
@@ -35,11 +41,148 @@ async function run() {
     // const appointmentsCollection = database.collection('appointments');
     // const usersCollection = database.collection('users');
     const agentsCollection = database.collection("agents");
-    const enablersCollection = database.collection("attendance");
+    // const enablersCollection = database.collection("attendance");
     const adjustmentCollection = database.collection("adjustment");
-    const auditCollection = database.collection("callAudit");
+    // const auditCollection = database.collection("callAudit");
     const roleCollection = database.collection("role");
+    const employeeCollection = database.collection("employee");
+    const attendanceCollection = database.collection("attendance");
+    const performanceCollection = database.collection("performance");
+    const lagCollection = database.collection("lag");
+    const auditCollection = database.collection("audit");
 
+    //Performance API
+    app.get("/performance", (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      performanceCollection.find(query).toArray((err, items) => {
+        res.send(items);
+      });
+    });
+    app.get("/performanceDetails", (req, res) => {
+      performanceCollection.find().toArray((err, items) => {
+        res.send(items);
+      });
+    });
+
+    app.post("/addPerformance", (req, res) => {
+      const newPerformance = req.body;
+      console.log("Adding New Performance", newPerformance);
+      performanceCollection.insert(newPerformance).then((result) => {
+        console.log("inserted Count", result.insertedCount);
+        res.send(result.insertedCount > 0);
+      });
+    });
+    //Adjustment API
+    app.get("/adjustment", (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      adjustmentCollection.find(query).toArray((err, items) => {
+        res.send(items);
+      });
+    });
+    app.get("/adjustmentDetails", (req, res) => {
+      adjustmentCollection.find().toArray((err, items) => {
+        res.send(items);
+      });
+    });
+
+    app.post("/addAdjustment", (req, res) => {
+      const newAdjustment = req.body;
+      console.log("Adding New Adjustment", newAdjustment);
+      adjustmentCollection.insert(newAdjustment).then((result) => {
+        console.log("inserted Count", result.insertedCount);
+        res.send(result.insertedCount > 0);
+      });
+    });
+    //Lag Consideration API
+    app.get("/lagConsideration", (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      lagCollection.find(query).toArray((err, items) => {
+        res.send(items);
+      });
+    });
+    app.get("/lagDetails", (req, res) => {
+      lagCollection.find().toArray((err, items) => {
+        res.send(items);
+      });
+    });
+
+    app.post("/addLag", (req, res) => {
+      const newLag = req.body;
+      console.log("Adding New Lag", newLag);
+      lagCollection.insert(newLag).then((result) => {
+        console.log("inserted Count", result.insertedCount);
+        res.send(result.insertedCount > 0);
+      });
+    });
+    //QA Report API
+    app.get("/audit", (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      auditCollection.find(query).toArray((err, items) => {
+        res.send(items);
+      });
+    });
+    app.get("/auditDetails", (req, res) => {
+      auditCollection.find().toArray((err, items) => {
+        res.send(items);
+      });
+    });
+
+    app.post("/addAudit", (req, res) => {
+      const newAudit = req.body;
+      console.log("Adding New Audit", newAudit);
+      auditCollection.insert(newAudit).then((result) => {
+        console.log("inserted Count", result.insertedCount);
+        res.send(result.insertedCount > 0);
+      });
+    });
+    //EmployeeCollection API
+    app.get("/employee", (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      employeeCollection.find(query).toArray((err, items) => {
+        res.send(items);
+      });
+    });
+
+    app.get("/employeeList", (req, res) => {
+      employeeCollection.find().toArray((err, items) => {
+        res.send(items);
+      });
+    });
+    app.post("/addEmployee", (req, res) => {
+      const newEmployee = req.body;
+      // console.log("Adding New Employee", newEmployee);
+      employeeCollection.insert(newEmployee).then((result) => {
+        // console.log("inserted Count", result.insertedCount);
+        res.send(result.insertedCount > 0);
+      });
+    });
+    //Attendance API
+    app.get("/attendance", (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      attendanceCollection.find(query).toArray((err, items) => {
+        res.send(items);
+      });
+    });
+
+    app.get("/attendanceList", (req, res) => {
+      attendanceCollection.find().toArray((err, items) => {
+        res.send(items);
+      });
+    });
+    app.post("/addAttendance", (req, res) => {
+      const newAttendance = req.body;
+      // console.log("Adding New Employee", newAttendance);
+      attendanceCollection.insert(newAttendance).then((result) => {
+        // console.log("inserted Count", result.insertedCount);
+        res.send(result.insertedCount > 0);
+      });
+    });
     // app.get('/appointments', verifyToken, async (req, res) => {
     //     const email = req.query.email;
     //     const date = req.query.date;
@@ -130,7 +273,7 @@ async function run() {
       });
     });
 
-    app.post("/Addadjustment", (req, res) => {
+    app.post("/AddAdjustment", (req, res) => {
       const newAdjustment = req.body;
       console.log("Adding New Adjustment", newAdjustment);
       adjustmentCollection.insertOne(newAdjustment).then((result) => {
@@ -172,34 +315,34 @@ async function run() {
         res.send(result.deletedCount > 0);
       });
     });
-    // Enabler API
-    app.get("/attendance", (req, res) => {
-      enablersCollection.find().toArray((err, items) => {
-        res.send(items);
-      });
-    });
+    // // Enabler API
+    // app.get("/attendance", (req, res) => {
+    //   enablersCollection.find().toArray((err, items) => {
+    //     res.send(items);
+    //   });
+    // });
 
-    app.get("/attendance/:id", (req, res) => {
-      const id = ObjectID(req.params.id);
-      enablersCollection.find(id).toArray((err, items) => {
-        res.send(items[0]);
-      });
-    });
+    // app.get("/attendance/:id", (req, res) => {
+    //   const id = ObjectID(req.params.id);
+    //   enablersCollection.find(id).toArray((err, items) => {
+    //     res.send(items[0]);
+    //   });
+    // });
 
-    app.post("/addAttendance", (req, res) => {
-      const newAttendance = req.body;
-      console.log("Adding New Attendance", newAttendance);
-      enablersCollection.insertOne(newAttendance).then((result) => {
-        console.log("inserted Count", result.insertedCount);
-        res.send(result.insertedCount > 0);
-      });
-    });
-    app.delete("/delete/:id", (req, res) => {
-      const id = ObjectID(req.params.id);
-      enablersCollection.deleteOne({ _id: id }).then((result) => {
-        res.send(result.deletedCount > 0);
-      });
-    });
+    // app.post("/addAttendance", (req, res) => {
+    //   const newAttendance = req.body;
+    //   console.log("Adding New Attendance", newAttendance);
+    //   enablersCollection.insertOne(newAttendance).then((result) => {
+    //     console.log("inserted Count", result.insertedCount);
+    //     res.send(result.insertedCount > 0);
+    //   });
+    // });
+    // app.delete("/delete/:id", (req, res) => {
+    //   const id = ObjectID(req.params.id);
+    //   enablersCollection.deleteOne({ _id: id }).then((result) => {
+    //     res.send(result.deletedCount > 0);
+    //   });
+    // });
     //Settings API
 
     app.get("/role", (req, res) => {
