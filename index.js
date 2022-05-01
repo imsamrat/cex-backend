@@ -52,6 +52,14 @@ async function run() {
     const auditCollection = database.collection("audit");
 
     //Performance API
+    //For TL
+    app.get("/performanceReport", (req, res) => {
+      const tlEmail = req.query.tlEmail;
+      const query = { tlEmail: tlEmail};
+      performanceCollection.find(query).toArray((err, items) => {
+        res.send(items);
+      });
+    });
     app.get("/performance", (req, res) => {
       const email = req.query.email;
       const query = { email: email };
@@ -74,6 +82,13 @@ async function run() {
       });
     });
     //Adjustment API
+    app.get("/adjustmentReport", (req, res) => {
+      const tlEmail = req.query.tlEmail;
+      const query = { tlEmail: tlEmail};
+      adjustmentCollection.find(query).toArray((err, items) => {
+        res.send(items);
+      });
+    });
     app.get("/adjustment", (req, res) => {
       const email = req.query.email;
       const query = { email: email };
@@ -96,6 +111,13 @@ async function run() {
       });
     });
     //Lag Consideration API
+    app.get("/lagReport", (req, res) => {
+      const tlEmail = req.query.tlEmail;
+      const query = { tlEmail: tlEmail};
+      lagCollection.find(query).toArray((err, items) => {
+        res.send(items);
+      });
+    });
     app.get("/lagConsideration", (req, res) => {
       const email = req.query.email;
       const query = { email: email };
@@ -118,6 +140,13 @@ async function run() {
       });
     });
     //QA Report API
+    app.get("/auditReport", (req, res) => {
+      const tlEmail = req.query.tlEmail;
+      const query = { tlEmail: tlEmail};
+      auditCollection.find(query).toArray((err, items) => {
+        res.send(items);
+      });
+    });
     app.get("/audit", (req, res) => {
       const email = req.query.email;
       const query = { email: email };
@@ -162,6 +191,14 @@ async function run() {
       });
     });
     //Attendance API
+    //For TL
+    app.get("/attendanceReport", (req, res) => {
+      const tlEmail = req.query.tlEmail;
+      const query = { tlEmail: tlEmail};
+      attendanceCollection.find(query).toArray((err, items) => {
+        res.send(items);
+      });
+    });
     app.get("/attendance", (req, res) => {
       const email = req.query.email;
       const query = { email: email };
