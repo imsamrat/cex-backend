@@ -9,12 +9,14 @@ const port = process.env.PORT || 5000;
 
 app.use(cors());
 // app.use(BodyParser.json());
-app.use( BodyParser.json({limit: '50mb'}) );
-app.use(BodyParser.urlencoded({
-  limit: '50mb',
-  extended: true,
-  parameterLimit:50000
-}));
+app.use(BodyParser.json({ limit: "50mb" }));
+app.use(
+  BodyParser.urlencoded({
+    limit: "50mb",
+    extended: true,
+    parameterLimit: 50000,
+  })
+);
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.tpdhc.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
@@ -55,7 +57,7 @@ async function run() {
     //For TL
     app.get("/performanceReport", (req, res) => {
       const tlEmail = req.query.tlEmail;
-      const query = { tlEmail: tlEmail};
+      const query = { tlEmail: tlEmail };
       performanceCollection.find(query).toArray((err, items) => {
         res.send(items);
       });
@@ -84,7 +86,7 @@ async function run() {
     //Adjustment API
     app.get("/adjustmentReport", (req, res) => {
       const tlEmail = req.query.tlEmail;
-      const query = { tlEmail: tlEmail};
+      const query = { tlEmail: tlEmail };
       adjustmentCollection.find(query).toArray((err, items) => {
         res.send(items);
       });
@@ -113,7 +115,7 @@ async function run() {
     //Lag Consideration API
     app.get("/lagReport", (req, res) => {
       const tlEmail = req.query.tlEmail;
-      const query = { tlEmail: tlEmail};
+      const query = { tlEmail: tlEmail };
       lagCollection.find(query).toArray((err, items) => {
         res.send(items);
       });
@@ -142,7 +144,7 @@ async function run() {
     //QA Report API
     app.get("/auditReport", (req, res) => {
       const tlEmail = req.query.tlEmail;
-      const query = { tlEmail: tlEmail};
+      const query = { tlEmail: tlEmail };
       auditCollection.find(query).toArray((err, items) => {
         res.send(items);
       });
@@ -169,6 +171,28 @@ async function run() {
       });
     });
     //EmployeeCollection API
+
+    app.get("/admin/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await employeeCollection.findOne(query);
+      let isAdmin = false;
+      if (user?.role === "admin") {
+        isAdmin = true;
+      }
+      res.json({ admin: isAdmin });
+    });
+    app.get("/teamLeader/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await employeeCollection.findOne(query);
+      let isTeamLeader = false;
+      if (user?.role === "teamLeader") {
+        isTeamLeader = true;
+      }
+      res.json({ teamLeader: isTeamLeader });
+    });
+
     app.get("/employee", (req, res) => {
       const email = req.query.email;
       const query = { email: email };
@@ -194,7 +218,7 @@ async function run() {
     //For TL
     app.get("/attendanceReport", (req, res) => {
       const tlEmail = req.query.tlEmail;
-      const query = { tlEmail: tlEmail};
+      const query = { tlEmail: tlEmail };
       attendanceCollection.find(query).toArray((err, items) => {
         res.send(items);
       });
