@@ -62,13 +62,20 @@ async function run() {
         res.send(items);
       });
     });
-    app.get("/performance", (req, res) => {
-      const email = req.query.email;
+    app.get("/performance/:email", async (req, res) => {
+      const email = req.params.email;
       const query = { email: email };
       performanceCollection.find(query).toArray((err, items) => {
         res.send(items);
       });
     });
+    // app.get("/performance", (req, res) => {
+    //   const email = req.query.email;
+    //   const query = { email: email };
+    //   performanceCollection.find(query).toArray((err, items) => {
+    //     res.send(items);
+    //   });
+    // });
     app.get("/performanceDetails", (req, res) => {
       performanceCollection.find().toArray((err, items) => {
         res.send(items);
@@ -182,6 +189,7 @@ async function run() {
       }
       res.json({ admin: isAdmin });
     });
+
     app.get("/teamLeader/:email", async (req, res) => {
       const email = req.params.email;
       const query = { email: email };
@@ -191,6 +199,17 @@ async function run() {
         isTeamLeader = true;
       }
       res.json({ teamLeader: isTeamLeader });
+    });
+
+    app.get("/lob/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await employeeCollection.findOne(query);
+      let isDigital = false;
+      if (user?.role === "digital") {
+        isDigital = true;
+      }
+      res.json({ digital: isDigital });
     });
 
     app.get("/employee", (req, res) => {
