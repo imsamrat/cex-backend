@@ -62,20 +62,13 @@ async function run() {
         res.send(items);
       });
     });
-    app.get("/performance/:email", async (req, res) => {
-      const email = req.params.email;
+    app.get("/performance", (req, res) => {
+      const email = req.query.email;
       const query = { email: email };
       performanceCollection.find(query).toArray((err, items) => {
         res.send(items);
       });
     });
-    // app.get("/performance", (req, res) => {
-    //   const email = req.query.email;
-    //   const query = { email: email };
-    //   performanceCollection.find(query).toArray((err, items) => {
-    //     res.send(items);
-    //   });
-    // });
     app.get("/performanceDetails", (req, res) => {
       performanceCollection.find().toArray((err, items) => {
         res.send(items);
