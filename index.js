@@ -83,6 +83,14 @@ async function run() {
         res.send(result.insertedCount > 0);
       });
     });
+    //Drop Performance Collection
+    app.delete("/deletePerformance", (req, res) => {
+      const deletePerformance = req.body;
+      performanceCollection.drop(deletePerformance).then((result) => {
+        console.log("deleted Count", result.deletedCount);
+        res.send(result.deletedCount > 0);
+      });
+    });
     //Adjustment API
     app.get("/adjustmentReport", (req, res) => {
       const tlEmail = req.query.tlEmail;
@@ -110,6 +118,14 @@ async function run() {
       adjustmentCollection.insert(newAdjustment).then((result) => {
         console.log("inserted Count", result.insertedCount);
         res.send(result.insertedCount > 0);
+      });
+    });
+    //Drop Adjustment Collection
+    app.delete("/deleteAdjustment", (req, res) => {
+      const deleteAdjustment = req.body;
+      adjustmentCollection.drop(deleteAdjustment).then((result) => {
+        console.log("deleted Count", result.deletedCount);
+        res.send(result.deletedCount > 0);
       });
     });
     //Lag Consideration API
@@ -168,6 +184,14 @@ async function run() {
       auditCollection.insert(newAudit).then((result) => {
         console.log("inserted Count", result.insertedCount);
         res.send(result.insertedCount > 0);
+      });
+    });
+    //Drop Audit Collection
+    app.delete("/deleteAudit", (req, res) => {
+      const deleteAudit = req.body;
+      auditCollection.drop(deleteAudit).then((result) => {
+        console.log("deleted Count", result.deletedCount);
+        res.send(result.deletedCount > 0);
       });
     });
     //EmployeeCollection API
@@ -254,6 +278,15 @@ async function run() {
       attendanceCollection.insert(newAttendance).then((result) => {
         // console.log("inserted Count", result.insertedCount);
         res.send(result.insertedCount > 0);
+      });
+    });
+
+    //Drop Attendance Collection
+    app.delete("/deleteAttendance", (req, res) => {
+      const deleteAttendance = req.body;
+      attendanceCollection.drop(deleteAttendance).then((result) => {
+        console.log("deleted Count", result.deletedCount);
+        res.send(result.deletedCount > 0);
       });
     });
     // app.get('/appointments', verifyToken, async (req, res) => {
@@ -416,6 +449,7 @@ async function run() {
     //     res.send(result.deletedCount > 0);
     //   });
     // });
+
     //Settings API
 
     app.get("/role", (req, res) => {
@@ -442,6 +476,14 @@ async function run() {
     app.delete("/delete/:id", (req, res) => {
       const id = ObjectID(req.params.id);
       roleCollection.deleteOne({ _id: id }).then((result) => {
+        res.send(result.deletedCount > 0);
+      });
+    });
+
+    app.delete("/deleteRole", (req, res) => {
+      const deleteRole = req.body;
+      roleCollection.drop(deleteRole).then((result) => {
+        console.log("deleted Count", result.deletedCount);
         res.send(result.deletedCount > 0);
       });
     });
