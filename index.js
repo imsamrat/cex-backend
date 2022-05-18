@@ -52,7 +52,22 @@ async function run() {
     const performanceCollection = database.collection("performance");
     const lagCollection = database.collection("lag");
     const auditCollection = database.collection("audit");
+    const reportCollections = database.collection("report");
 
+    //Report API
+    app.get("/reportDetails", (req, res) => {
+      reportCollections.find().toArray((err, items) => {
+        res.send(items);
+      });
+    });
+    app.post("/addReport", (req, res) => {
+      const newReport = req.body;
+      console.log("Adding New Performance", newReport);
+      reportCollections.insert(newReport).then((result) => {
+        console.log("inserted Count", result.insertedCount);
+        res.send(result.insertedCount > 0);
+      });
+    });
     //Performance API
     //For TL
     app.get("/performanceReport", (req, res) => {
