@@ -53,6 +53,9 @@ async function run() {
     const lagCollection = database.collection("lag");
     const auditCollection = database.collection("audit");
     const reportCollections = database.collection("report");
+    const rtcCollections = database.collection("rtc");
+    const outboundCollections = database.collection("OBReport");
+    const rosterCollections = database.collection("roster");
 
     //Report API
     app.get("/reportDetails", (req, res) => {
@@ -64,6 +67,79 @@ async function run() {
       const newReport = req.body;
       console.log("Adding New Performance", newReport);
       reportCollections.insert(newReport).then((result) => {
+        console.log("inserted Count", result.insertedCount);
+        res.send(result.insertedCount > 0);
+      });
+    });
+
+    //Delete Information
+    app.delete("/deleteInfo/:id", (req, res) => {
+      console.log(req.params.id);
+      reportCollections.deleteOne({ _id: ObjectID(req.params.id) }).then((result) => {
+        res.send(result.deletedCount > 0);
+      });
+    });
+
+    //Roster API
+    app.get("/rosterDetails", (req, res) => {
+      rosterCollections.find().toArray((err, items) => {
+        res.send(items);
+      });
+    });
+    app.post("/addRoster", (req, res) => {
+      const newRoster = req.body;
+      console.log("Adding New Performance", newRoster);
+      rosterCollections.insert(newRoster).then((result) => {
+        console.log("inserted Count", result.insertedCount);
+        res.send(result.insertedCount > 0);
+      });
+    });
+    app.post('/addUpdateRoster', (req, res) => {
+      rosterCollections.insertOne(req.body)
+          .then(result => res.send(!!result.insertedCount))
+  })
+
+    //Delete Information
+    app.delete("/deleteRoster/:id", (req, res) => {
+      console.log(req.params.id);
+      rosterCollections.deleteOne({ _id: ObjectID(req.params.id) }).then((result) => {
+        res.send(result.deletedCount > 0);
+      });
+    });
+
+    app.patch('/updateRoster/:id', (req, res) => {
+      rosterCollections.updateOne(
+          { _id: ObjectID(req.params.id) },
+          {
+              $set: req.body
+          }
+      ).then(result => res.send(!!result.modifiedCount))
+  })
+
+    //OB Report API
+    app.get("/ObReportDetails", (req, res) => {
+      outboundCollections.find().toArray((err, items) => {
+        res.send(items);
+      });
+    });
+    app.post("/addObReport", (req, res) => {
+      const newObReport = req.body;
+      console.log("Adding New OB Report", newObReport);
+      outboundCollections.insert(newObReport).then((result) => {
+        console.log("inserted Count", result.insertedCount);
+        res.send(result.insertedCount > 0);
+      });
+    });
+    //RTC API
+    app.get("/rtcDetails", (req, res) => {
+      rtcCollections.find().toArray((err, items) => {
+        res.send(items);
+      });
+    });
+    app.post("/addRtc", (req, res) => {
+      const newRtc = req.body;
+      console.log("Adding New RTC", newRtc);
+      rtcCollections.insert(newRtc).then((result) => {
         console.log("inserted Count", result.insertedCount);
         res.send(result.insertedCount > 0);
       });
