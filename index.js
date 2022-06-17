@@ -56,6 +56,7 @@ async function run() {
     const rtcCollections = database.collection("rtc");
     const outboundCollections = database.collection("OBReport");
     const rosterCollections = database.collection("roster");
+    const statusCollections = database.collection("status");
 
     //Report API
     app.get("/reportDetails", (req, res) => {
@@ -75,9 +76,11 @@ async function run() {
     //Delete Information
     app.delete("/deleteInfo/:id", (req, res) => {
       console.log(req.params.id);
-      reportCollections.deleteOne({ _id: ObjectID(req.params.id) }).then((result) => {
-        res.send(result.deletedCount > 0);
-      });
+      reportCollections
+        .deleteOne({ _id: ObjectID(req.params.id) })
+        .then((result) => {
+          res.send(result.deletedCount > 0);
+        });
     });
 
     //Roster API
@@ -94,27 +97,32 @@ async function run() {
         res.send(result.insertedCount > 0);
       });
     });
-    app.post('/addUpdateRoster', (req, res) => {
-      rosterCollections.insertOne(req.body)
-          .then(result => res.send(!!result.insertedCount))
-  })
+    app.post("/addUpdateRoster", (req, res) => {
+      rosterCollections
+        .insertOne(req.body)
+        .then((result) => res.send(!!result.insertedCount));
+    });
 
     //Delete Information
     app.delete("/deleteRoster/:id", (req, res) => {
       console.log(req.params.id);
-      rosterCollections.deleteOne({ _id: ObjectID(req.params.id) }).then((result) => {
-        res.send(result.deletedCount > 0);
-      });
+      rosterCollections
+        .deleteOne({ _id: ObjectID(req.params.id) })
+        .then((result) => {
+          res.send(result.deletedCount > 0);
+        });
     });
 
-    app.patch('/updateRoster/:id', (req, res) => {
-      rosterCollections.updateOne(
+    app.patch("/updateRoster/:id", (req, res) => {
+      rosterCollections
+        .updateOne(
           { _id: ObjectID(req.params.id) },
           {
-              $set: req.body
+            $set: req.body,
           }
-      ).then(result => res.send(!!result.modifiedCount))
-  })
+        )
+        .then((result) => res.send(!!result.modifiedCount));
+    });
 
     //OB Report API
     app.get("/ObReportDetails", (req, res) => {
@@ -379,6 +387,29 @@ async function run() {
         console.log("deleted Count", result.deletedCount);
         res.send(result.deletedCount > 0);
       });
+    });
+
+    //Status API
+    app.get("/statusDetails", (req, res) => {
+      statusCollections.find().toArray((err, items) => {
+        res.send(items);
+      });
+    });
+    app.post("/addStatus", (req, res) => {
+      statusCollections
+        .insertOne(req.body)
+        .then((result) => res.send(!!result.insertedCount));
+    });
+
+    app.patch("/updateStatus/:id", (req, res) => {
+      statusCollections
+        .updateOne(
+          { _id: ObjectID(req.params.id) },
+          {
+            $set: req.body,
+          }
+        )
+        .then((result) => res.send(!!result.modifiedCount));
     });
     // app.get('/appointments', verifyToken, async (req, res) => {
     //     const email = req.query.email;
