@@ -50,6 +50,7 @@ async function run() {
     const employeeCollection = database.collection("employee");
     const attendanceCollection = database.collection("attendance");
     const performanceCollection = database.collection("performance");
+    const dayWiseReportCollection = database.collection("dayWisePerformance");
     const lagCollection = database.collection("lag");
     const auditCollection = database.collection("audit");
     const reportCollections = database.collection("report");
@@ -148,6 +149,35 @@ async function run() {
       const newRtc = req.body;
       console.log("Adding New RTC", newRtc);
       rtcCollections.insert(newRtc).then((result) => {
+        console.log("inserted Count", result.insertedCount);
+        res.send(result.insertedCount > 0);
+      });
+    });
+    //Day Wise Performance API
+    app.get("/dayWiseReportForTL", (req, res) => {
+      const tlEmail = req.query.tlEmail;
+      const query = { tlEmail: tlEmail };
+      dayWiseReportCollection.find(query).toArray((err, items) => {
+        res.send(items);
+      });
+    });
+    app.get("/dayWiseReportForAgent", (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      dayWiseReportCollection.find(query).toArray((err, items) => {
+        res.send(items);
+      });
+    });
+    app.get("/dayWiseReportDetails", (req, res) => {
+      dayWiseReportCollection.find().toArray((err, items) => {
+        res.send(items);
+      });
+    });
+
+    app.post("/addDayWiseReport", (req, res) => {
+      const newDayWiseReport = req.body;
+      console.log("Adding New Day Wise Report", newDayWiseReport);
+      dayWiseReportCollection.insert(newDayWiseReport).then((result) => {
         console.log("inserted Count", result.insertedCount);
         res.send(result.insertedCount > 0);
       });
