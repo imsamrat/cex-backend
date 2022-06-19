@@ -182,6 +182,14 @@ async function run() {
         res.send(result.insertedCount > 0);
       });
     });
+    //Drop Audit Collection
+    app.delete("/deleteDayWiseReport", (req, res) => {
+      const deleteReport = req.body;
+      dayWiseReportCollection.drop(deleteReport).then((result) => {
+        console.log("deleted Count", result.deletedCount);
+        res.send(result.deletedCount > 0);
+      });
+    });
     //Performance API
     //For TL
     app.get("/performanceReport", (req, res) => {
