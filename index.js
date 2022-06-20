@@ -354,6 +354,16 @@ async function run() {
       }
       res.json({ teamLeader: isTeamLeader });
     });
+    app.get("/preAdmin/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await employeeCollection.findOne(query);
+      let isPreAdmin = false;
+      if (user?.role === "preAdmin") {
+        isPreAdmin = true;
+      }
+      res.json({ preAdmin: isPreAdmin });
+    });
 
     app.get("/lob/:email", async (req, res) => {
       const email = req.params.email;
@@ -385,6 +395,13 @@ async function run() {
       employeeCollection.insert(newEmployee).then((result) => {
         // console.log("inserted Count", result.insertedCount);
         res.send(result.insertedCount > 0);
+      });
+    });
+    app.delete("/deleteEmployeeList", (req, res) => {
+      const deleteEmployee = req.body;
+      employeeCollection.drop(deleteEmployee).then((result) => {
+        console.log("deleted Count", result.deletedCount);
+        res.send(result.deletedCount > 0);
       });
     });
     //Attendance API
