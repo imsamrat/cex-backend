@@ -58,6 +58,88 @@ async function run() {
     const outboundCollections = database.collection("OBReport");
     const rosterCollections = database.collection("roster");
     const statusCollections = database.collection("status");
+    const dgPerformanceCollections = database.collection("dgPerformance");
+    // const dgAttendanceCollections = database.collection("dgAttendance");
+    // const dgAdjustmentCollections = database.collection("dgAdjustment");
+    // const dgAuditCollections = database.collection("dgAudit");
+    const dgDayWiseCollections = database.collection("dgDayWiseReport");
+
+    //Digital Performance API
+    app.get("/performanceReportDgTl", (req, res) => {
+      const tlEmail = req.query.tlEmail;
+      const query = { tlEmail: tlEmail };
+      dgPerformanceCollections.find(query).toArray((err, items) => {
+        res.send(items);
+      });
+    });
+    app.get("/performanceReportDgAgent", (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      dgPerformanceCollections.find(query).toArray((err, items) => {
+        res.send(items);
+      });
+    });
+    app.get("/dgPerformanceReportDetails", (req, res) => {
+      dgPerformanceCollections.find().toArray((err, items) => {
+        res.send(items);
+      });
+    });
+
+    app.post("/addDgPerformanceReport", (req, res) => {
+      const newDgPerformanceReport = req.body;
+      console.log("Adding New Day Wise Report", newDgPerformanceReport);
+      dgPerformanceCollections.insert(newDgPerformanceReport).then((result) => {
+        console.log("inserted Count", result.insertedCount);
+        res.send(result.insertedCount > 0);
+      });
+    });
+    //Drop Performance Collection
+    app.delete("/deleteDgPerformanceReport", (req, res) => {
+      const deleteDgPerformanceReport = req.body;
+      dgPerformanceCollections.drop(deleteDgPerformanceReport).then((result) => {
+        console.log("deleted Count", result.deletedCount);
+        res.send(result.deletedCount > 0);
+      });
+    });
+
+    //Day Wise Digital Performance API
+    app.get("/dgDayWiseReportTL", (req, res) => {
+      const tlEmail = req.query.tlEmail;
+      const query = { tlEmail: tlEmail };
+      dgDayWiseCollections.find(query).toArray((err, items) => {
+        res.send(items);
+      });
+    });
+    app.get("/dgDayWiseReportForAgent", (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      dgDayWiseCollections.find(query).toArray((err, items) => {
+        res.send(items);
+      });
+    });
+    app.get("/dgDayWiseReportDetails", (req, res) => {
+      dgDayWiseCollections.find().toArray((err, items) => {
+        res.send(items);
+      });
+    });
+
+    app.post("/addDgDayWiseReport", (req, res) => {
+      const newDgDayWiseReport = req.body;
+      console.log("Adding New Day Wise Report", newDgDayWiseReport);
+      dgDayWiseCollections.insert(newDgDayWiseReport).then((result) => {
+        console.log("inserted Count", result.insertedCount);
+        res.send(result.insertedCount > 0);
+      });
+    });
+    //Drop Audit Collection
+    app.delete("/deleteDgDayWiseReport", (req, res) => {
+      const deleteDgReport = req.body;
+      dgDayWiseCollections.drop(deleteDgReport).then((result) => {
+        console.log("deleted Count", result.deletedCount);
+        res.send(result.deletedCount > 0);
+      });
+    });
+    
 
     //Report API
     app.get("/reportDetails", (req, res) => {
@@ -354,6 +436,17 @@ async function run() {
       }
       res.json({ teamLeader: isTeamLeader });
     });
+    app.get("/digitalLeader/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await employeeCollection.findOne(query);
+      let isDigitalLeader = false;
+      if (user?.role === "digitalLeader") {
+        isDigitalLeader = true;
+      }
+      res.json({ digitalLeader: isDigitalLeader });
+    });
+
     app.get("/preAdmin/:email", async (req, res) => {
       const email = req.params.email;
       const query = { email: email };
