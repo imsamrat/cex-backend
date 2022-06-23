@@ -117,6 +117,7 @@ async function run() {
         res.send(items);
       });
     });
+    //Digital Day wise Report
     app.get("/dgDayWiseReportDetails", (req, res) => {
       dgDayWiseCollections.find().toArray((err, items) => {
         res.send(items);
