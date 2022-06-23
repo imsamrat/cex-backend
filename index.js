@@ -470,6 +470,17 @@ async function run() {
       res.json({ digital: isDigital });
     });
 
+    app.get("/voiceLob/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await employeeCollection.findOne(query);
+      let isVoiceAgent = false;
+      if (user?.role === "voiceAgent") {
+        isVoiceAgent = true;
+      }
+      res.json({ voiceAgent: isVoiceAgent });
+    });
+
     app.get("/employee", (req, res) => {
       const email = req.query.email;
       const query = { email: email };
