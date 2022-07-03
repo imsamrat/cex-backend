@@ -63,6 +63,39 @@ async function run() {
     // const dgAdjustmentCollections = database.collection("dgAdjustment");
     // const dgAuditCollections = database.collection("dgAudit");
     const dgDayWiseCollections = database.collection("dgDayWiseReport");
+    const salaryCollections = database.collection("salary");
+
+    //Salary
+    app.get("/salaryReportSingle", (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      salaryCollections.find(query).toArray((err, items) => {
+        res.send(items);
+      });
+    });
+
+    app.get("/salaryReport", (req, res) => {
+      salaryCollections.find().toArray((err, items) => {
+        res.send(items);
+      });
+    });
+    app.post("/addSalaryReport", (req, res) => {
+      const newSalaryReport = req.body;
+      console.log("Adding New Salary Report", newSalaryReport);
+      salaryCollections.insert(newSalaryReport).then((result) => {
+        console.log("inserted Count", result.insertedCount);
+        res.send(result.insertedCount > 0);
+      });
+    });
+    //Drop Salary Collection
+    app.delete("/deleteSalaryReport", (req, res) => {
+      const deleteSalaryReport = req.body;
+      salaryCollections.drop(deleteSalaryReport).then((result) => {
+        console.log("deleted Count", result.deletedCount);
+        res.send(result.deletedCount > 0);
+      });
+    });
+
 
     //Digital Performance API
     app.get("/performanceReportDgTl", (req, res) => {
