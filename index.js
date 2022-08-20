@@ -87,7 +87,7 @@ async function run() {
         res.send(result.insertedCount > 0);
       });
     });
-    //Drop Salary API
+    //Drop Salary API Collection
     app.delete("/deleteSalaryReport", (req, res) => {
       const deleteSalaryReport = req.body;
       salaryCollections.drop(deleteSalaryReport).then((result) => {
